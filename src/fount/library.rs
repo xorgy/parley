@@ -67,6 +67,15 @@ impl Default for Library {
     }
 }
 
+#[cfg(target_os = "android")]
+impl Default for Library {
+    fn default() -> Self {
+        let mut builder = LibraryBuilder::default();
+        builder.add_system_path("/system/fonts/");
+        builder.build()
+    }
+}
+
 pub struct Inner {
     pub system: SystemCollectionData,
     pub user: Arc<RwLock<CollectionData>>,
