@@ -3,7 +3,7 @@
 
 //! Support for script/language based font fallback.
 
-use super::{family::FamilyId, script::Script};
+use super::{family::FamilyId, generic::GenericFamily, script::Script};
 use alloc::vec::Vec;
 use hashbrown::HashMap;
 use icu_locid::LanguageIdentifier;
@@ -109,13 +109,18 @@ impl FallbackMap {
 pub struct FallbackKey {
     script: Script,
     locale: Option<&'static str>,
+    generic_family: Option<GenericFamily>,
     is_default: bool,
     is_tracked: bool,
 }
 
 impl FallbackKey {
     /// Creates a new fallback key from the given script and locale.
-    pub fn new(script: impl Into<Script>, locale: Option<&LanguageIdentifier>) -> Self {
+    pub fn new(
+        script: impl Into<Script>,
+        locale: Option<&LanguageIdentifier>,
+        generic_family: Option<GenericFamily>,
+    ) -> Self {
         let script = script.into();
         let (locale, is_default, is_tracked) = match canonical_locale(script, locale) {
             Some((is_default, locale)) => (Some(locale), is_default, true),
@@ -124,6 +129,7 @@ impl FallbackKey {
         Self {
             script,
             locale,
+            generic_family,
             is_default,
             is_tracked,
         }
@@ -137,6 +143,11 @@ impl FallbackKey {
     /// Returns a normalized version of the requested locale.
     pub fn locale(&self) -> Option<&'static str> {
         self.locale
+    }
+
+    /// Returns the generic family, if any.
+    pub fn generic_family(&self) -> Option<GenericFamily> {
+        self.generic_family
     }
 
     /// Returns true if the requested locale is considered the "default"
@@ -160,7 +171,7 @@ where
 {
     fn from(value: (S, &str)) -> Self {
         let locale = LanguageIdentifier::try_from_bytes(value.1.as_bytes()).ok();
-        Self::new(value.0, locale.as_ref())
+        Self::new(value.0, locale.as_ref(), None)
     }
 }
 
@@ -169,7 +180,7 @@ where
     S: Into<Script>,
 {
     fn from(value: (S, &LanguageIdentifier)) -> Self {
-        Self::new(value.0, Some(value.1))
+        Self::new(value.0, Some(value.1), None)
     }
 }
 
@@ -178,7 +189,7 @@ where
     S: Into<Script>,
 {
     fn from(value: S) -> Self {
-        Self::new(value, None)
+        Self::new(value, None, None)
     }
 }
 

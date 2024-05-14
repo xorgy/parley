@@ -36,7 +36,7 @@ impl From<&FamilyName> for FamilyId {
 
 /// Bidirectional map that associates font family names with unique
 /// identifiers.
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Debug)]
 pub struct FamilyNameMap {
     name_map: HashMap<Arc<[u8]>, FamilyName>,
     id_map: HashMap<FamilyId, FamilyName>,

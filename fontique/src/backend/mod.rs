@@ -11,8 +11,12 @@ mod system;
 #[path = "coretext.rs"]
 mod system;
 
+// #[cfg(all(feature = "system", target_os = "linux"))]
+// #[path = "fontconfig/mod.rs"]
+// mod system;
+
 #[cfg(all(feature = "system", target_os = "linux"))]
-#[path = "fontconfig/mod.rs"]
+#[path = "android.rs"]
 mod system;
 
 #[cfg(all(feature = "system", target_os = "android"))]

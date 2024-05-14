@@ -182,6 +182,10 @@ impl SystemFonts {
     pub fn fallback(&self, key: impl Into<FallbackKey>) -> Option<FamilyId> {
         let key: FallbackKey = key.into();
         let script = key.script();
+        let (_is_ui, _is_serif) = key
+            .generic_family()
+            .map(|x| (x.is_ui(), x.is_serif()))
+            .unwrap_or((false, false));
 
         key.locale()
             .and_then(|li| {
@@ -198,7 +202,7 @@ impl SystemFonts {
             })
             .or_else(|| {
                 self.generic_families
-                    .get(GenericFamily::SansSerif)
+                    .get(key.generic_family().unwrap_or(GenericFamily::SansSerif))
                     .first()
                     .copied()
             })

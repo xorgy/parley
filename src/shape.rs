@@ -191,7 +191,11 @@ impl<'a, 'b, B: Brush> FontSelector<'a, 'b, B> {
         query.set_families(fonts.iter().copied());
         let fb_script = crate::swash_convert::script_to_fontique(script);
         let fb_language = locale.and_then(crate::swash_convert::locale_to_fontique);
-        query.set_fallbacks(fontique::FallbackKey::new(fb_script, fb_language.as_ref()));
+        query.set_fallbacks(fontique::FallbackKey::new(
+            fb_script,
+            fb_language.as_ref(),
+            None, // `fonts` is all resolved at this point, so any GenericFamily is gone.
+        ));
         query.set_attributes(attrs);
         Self {
             query,

@@ -99,6 +99,20 @@ impl GenericFamily {
             GenericFamily::FangSong,
         ]
     }
+
+    pub fn is_ui(&self) -> bool {
+        matches!(
+            self,
+            GenericFamily::SystemUi
+                | GenericFamily::UiSansSerif
+                | GenericFamily::UiSerif
+                | GenericFamily::UiRounded
+        )
+    }
+
+    pub fn is_serif(&self) -> bool {
+        matches!(self, GenericFamily::Serif | GenericFamily::UiSerif)
+    }
 }
 
 impl fmt::Display for GenericFamily {
